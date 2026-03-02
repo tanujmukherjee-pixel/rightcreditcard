@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Right Credit Card</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">RightCreditCard</p>
+      <h1>Find the best credit card for your exact spending context</h1>
+      <p>Compare reward fit by use case, spending level, and preferred benefits.</p>
+    </header>
+
+    <section class="panel" aria-label="Recommendation Inputs">
+      <h2>Your spending context</h2>
+      <form id="recommendForm" class="form-grid">
+        <label>
+          Primary use case
+          <select id="category" name="category">
+            <option value="flights">Flight bookings</option>
+            <option value="hotels">Hotel bookings</option>
+            <option value="dining">Dining</option>
+            <option value="online">Online shopping</option>
+            <option value="fuel">Fuel</option>
+            <option value="all">Mixed spending</option>
+          </select>
+        </label>
+
+        <label>
+          Monthly card spend (INR)
+          <input id="monthlySpend" name="monthlySpend" type="number" min="5000" step="1000" value="80000" />
+        </label>
+
+        <label>
+          Preferred benefit
+          <select id="benefit" name="benefit">
+            <option value="travel">Travel rewards</option>
+            <option value="cashback">Cashback</option>
+            <option value="lounge">Lounge access</option>
+            <option value="lifestyle">Lifestyle perks</option>
+          </select>
+        </label>
+
+        <label>
+          Travel frequency
+          <select id="travelFrequency" name="travelFrequency">
+            <option value="high">Frequent traveler</option>
+            <option value="medium">Occasional traveler</option>
+            <option value="low">Rare traveler</option>
+          </select>
+        </label>
+
+        <button type="submit" class="btn">Get Recommendations</button>
+      </form>
+    </section>
+
+    <section class="panel" aria-label="Recommendation Results">
+      <div class="results-header">
+        <h2>Top matches</h2>
+        <p id="scenarioText"></p>
+      </div>
+      <div id="results" class="results"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
