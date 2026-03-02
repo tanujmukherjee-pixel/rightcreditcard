@@ -6,6 +6,7 @@ const cards = [
     categories: { flights: 10, hotels: 10, dining: 6, online: 7, fuel: 3, all: 8 },
     benefits: ["travel", "lounge", "lifestyle"],
     travelFit: "high",
+    merchantBoost: { smartbuy: 4, "airline-direct": 2, amazon: 1 },
     why: [
       "Strong reward acceleration on SmartBuy travel bookings",
       "High-value lounge and premium lifestyle benefits",
@@ -19,6 +20,7 @@ const cards = [
     categories: { flights: 9, hotels: 9, dining: 5, online: 6, fuel: 2, all: 7 },
     benefits: ["travel", "lounge"],
     travelFit: "high",
+    merchantBoost: { "airline-direct": 2, smartbuy: 1 },
     why: [
       "Miles-focused structure for travelers",
       "Useful transfer partners for flight/hotel redemptions",
@@ -32,6 +34,7 @@ const cards = [
     categories: { flights: 5, hotels: 5, dining: 4, online: 10, fuel: 2, all: 7 },
     benefits: ["cashback"],
     travelFit: "low",
+    merchantBoost: { amazon: 2, myntra: 2, "swiggy-zomato": 1 },
     why: [
       "High and straightforward online cashback",
       "Simple redemption model",
@@ -45,6 +48,7 @@ const cards = [
     categories: { flights: 7, hotels: 7, dining: 6, online: 6, fuel: 2, all: 6 },
     benefits: ["travel", "lounge", "lifestyle"],
     travelFit: "medium",
+    merchantBoost: { smartbuy: 2, "airline-direct": 1 },
     why: [
       "Balanced travel and lifestyle profile",
       "Accessible premium features",
@@ -58,6 +62,7 @@ const cards = [
     categories: { flights: 4, hotels: 4, dining: 3, online: 9, fuel: 1, all: 6 },
     benefits: ["cashback"],
     travelFit: "low",
+    merchantBoost: { amazon: 4, myntra: 1 },
     why: [
       "No annual fee cashback option",
       "Strong fit for Amazon-heavy spending",
@@ -71,6 +76,7 @@ const cards = [
     categories: { flights: 2, hotels: 2, dining: 3, online: 3, fuel: 10, all: 4 },
     benefits: ["cashback"],
     travelFit: "low",
+    merchantBoost: { "hpcl-bpcl-iocl": 4 },
     why: [
       "Specialized rewards on fuel spends",
       "Good value for heavy driving usage",
@@ -80,10 +86,29 @@ const cards = [
 ];
 
 const travelRank = { low: 1, medium: 2, high: 3 };
+const categoryLabel = {
+  flights: "flight bookings",
+  hotels: "hotel bookings",
+  dining: "dining",
+  online: "online shopping",
+  fuel: "fuel",
+  all: "mixed spending"
+};
+const merchantLabel = {
+  generic: "any merchant",
+  smartbuy: "HDFC SmartBuy",
+  amazon: "Amazon India",
+  myntra: "Myntra",
+  "swiggy-zomato": "Swiggy / Zomato",
+  "hpcl-bpcl-iocl": "HPCL / BPCL / IOCL",
+  "airline-direct": "airline direct"
+};
 
 const form = document.getElementById("recommendForm");
+const quickPickForm = document.getElementById("quickPickForm");
 const scenarioText = document.getElementById("scenarioText");
 const resultsNode = document.getElementById("results");
+const quickResult = document.getElementById("quickResult");
 
 function scoreCard(card, context) {
   let score = 0;
@@ -109,6 +134,10 @@ function scoreCard(card, context) {
     score += 1.5;
   }
 
+  if (context.merchant !== "generic") {
+    score += card.merchantBoost[context.merchant] || 0;
+  }
+
   return Number(score.toFixed(2));
 }
 
@@ -122,17 +151,18 @@ function recommend(context) {
     .slice(0, 3);
 }
 
-function renderResults(list, context) {
-  const categoryLabel = {
-    flights: "flight bookings",
-    hotels: "hotel bookings",
-    dining: "dining",
-    online: "online shopping",
-    fuel: "fuel",
-    all: "mixed spending"
+function getContextFromForm() {
+  return {
+    category: form.category.value,
+    merchant: form.merchant.value,
+    monthlySpend: Number(form.monthlySpend.value),
+    benefit: form.benefit.value,
+    travelFrequency: form.travelFrequency.value
   };
+}
 
-  scenarioText.textContent = `Context: ${categoryLabel[context.category]}, INR ${context.monthlySpend.toLocaleString("en-IN")}/month, ${context.benefit}`;
+function renderResults(list, context) {
+  scenarioText.textContent = `Context: ${categoryLabel[context.category]}, ${merchantLabel[context.merchant]}, INR ${context.monthlySpend.toLocaleString("en-IN")}/month, ${context.benefit}`;
 
   resultsNode.innerHTML = "";
 
@@ -144,7 +174,7 @@ function renderResults(list, context) {
         <h3>${card.name}</h3>
         <span class="rank">#${index + 1} Match</span>
       </div>
-      <p class="score">Fit score: ${card.fitScore}/16</p>
+      <p class="score">Fit score: ${card.fitScore}/20</p>
       <p>Annual fee: INR ${card.annualFee.toLocaleString("en-IN")}</p>
       <ul>${card.why.map((line) => `<li>${line}</li>`).join("")}</ul>
     `;
@@ -152,17 +182,51 @@ function renderResults(list, context) {
   });
 }
 
+function recommendQuickCard(purchaseAmount, category, merchant) {
+  const scored = cards
+    .map((card) => {
+      const categoryScore = card.categories[category] || card.categories.all;
+      const merchantScore = merchant === "generic" ? 0 : card.merchantBoost[merchant] || 0;
+      const rewardRate = Math.min(15, card.baseReward + categoryScore * 0.35 + merchantScore * 0.5);
+      const estimatedValue = (purchaseAmount * rewardRate) / 100;
+
+      return {
+        ...card,
+        rewardRate: Number(rewardRate.toFixed(2)),
+        estimatedValue: Math.round(estimatedValue)
+      };
+    })
+    .sort((a, b) => b.estimatedValue - a.estimatedValue);
+
+  return scored[0];
+}
+
+function renderQuickResult(card, amount, category, merchant) {
+  quickResult.innerHTML = `
+    <div class="result-head">
+      <h3>Best card now: ${card.name}</h3>
+      <span class="rank">${card.rewardRate}% est. rate</span>
+    </div>
+    <p class="score">Estimated value on INR ${amount.toLocaleString("en-IN")}: INR ${card.estimatedValue.toLocaleString("en-IN")}</p>
+    <p>Context: ${categoryLabel[category]}, ${merchantLabel[merchant]}</p>
+    <p>Why: ${card.why[0]}</p>
+  `;
+}
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-
-  const context = {
-    category: form.category.value,
-    monthlySpend: Number(form.monthlySpend.value),
-    benefit: form.benefit.value,
-    travelFrequency: form.travelFrequency.value
-  };
-
+  const context = getContextFromForm();
   renderResults(recommend(context), context);
 });
 
+quickPickForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const amount = Number(quickPickForm.purchaseAmount.value);
+  const category = quickPickForm.quickCategory.value;
+  const merchant = quickPickForm.quickMerchant.value;
+  const bestCard = recommendQuickCard(amount, category, merchant);
+  renderQuickResult(bestCard, amount, category, merchant);
+});
+
 form.dispatchEvent(new Event("submit"));
+quickPickForm.dispatchEvent(new Event("submit"));

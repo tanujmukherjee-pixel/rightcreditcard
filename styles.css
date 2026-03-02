@@ -69,6 +69,13 @@ body {
   align-items: end;
 }
 
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 0.8rem;
+  align-items: end;
+}
+
 label {
   display: grid;
   gap: 0.35rem;
@@ -123,6 +130,14 @@ select {
   gap: 0.75rem;
 }
 
+.quick-result {
+  margin-top: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: #fcfdff;
+}
+
 .result-card {
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -168,6 +183,10 @@ select {
 
 @media (max-width: 760px) {
   .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-grid {
     grid-template-columns: 1fr;
   }
 

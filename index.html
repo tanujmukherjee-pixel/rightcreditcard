@@ -30,6 +30,19 @@
         </label>
 
         <label>
+          Merchant/channel
+          <select id="merchant" name="merchant">
+            <option value="generic">Any merchant</option>
+            <option value="smartbuy">HDFC SmartBuy</option>
+            <option value="amazon">Amazon India</option>
+            <option value="myntra">Myntra</option>
+            <option value="swiggy-zomato">Swiggy / Zomato</option>
+            <option value="hpcl-bpcl-iocl">HPCL / BPCL / IOCL</option>
+            <option value="airline-direct">Airline direct</option>
+          </select>
+        </label>
+
+        <label>
           Monthly card spend (INR)
           <input id="monthlySpend" name="monthlySpend" type="number" min="5000" step="1000" value="80000" />
         </label>
@@ -55,6 +68,43 @@
 
         <button type="submit" class="btn">Get Recommendations</button>
       </form>
+    </section>
+
+    <section class="panel" aria-label="Quick Recommendation">
+      <h2>Quick pick for this purchase</h2>
+      <form id="quickPickForm" class="quick-grid">
+        <label>
+          Purchase amount (INR)
+          <input id="purchaseAmount" name="purchaseAmount" type="number" min="100" step="100" value="12000" />
+        </label>
+
+        <label>
+          Purchase type
+          <select id="quickCategory" name="quickCategory">
+            <option value="flights">Flights</option>
+            <option value="hotels">Hotels</option>
+            <option value="dining">Dining</option>
+            <option value="online">Online shopping</option>
+            <option value="fuel">Fuel</option>
+          </select>
+        </label>
+
+        <label>
+          Merchant/channel
+          <select id="quickMerchant" name="quickMerchant">
+            <option value="generic">Any merchant</option>
+            <option value="smartbuy">HDFC SmartBuy</option>
+            <option value="amazon">Amazon India</option>
+            <option value="myntra">Myntra</option>
+            <option value="swiggy-zomato">Swiggy / Zomato</option>
+            <option value="hpcl-bpcl-iocl">HPCL / BPCL / IOCL</option>
+            <option value="airline-direct">Airline direct</option>
+          </select>
+        </label>
+
+        <button type="submit" class="btn">Find Best Card</button>
+      </form>
+      <article id="quickResult" class="quick-result"></article>
     </section>
 
     <section class="panel" aria-label="Recommendation Results">

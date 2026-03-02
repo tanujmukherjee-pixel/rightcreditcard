@@ -5,8 +5,10 @@ A lightweight website tool that recommends the best credit card for a given spen
 ## What it does
 
 - Takes user context: use case, monthly spend, preferred benefit, travel frequency.
+- Adds merchant/channel awareness (SmartBuy, Amazon, airline direct, fuel networks).
 - Scores cards using deterministic rules.
 - Shows top 3 cards with a fit score and clear reasons.
+- Includes a quick-pick mode for one specific purchase amount.
 
 ## Run locally
 
