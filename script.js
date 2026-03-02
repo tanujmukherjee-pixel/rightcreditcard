@@ -228,5 +228,31 @@ quickPickForm.addEventListener("submit", (event) => {
   renderQuickResult(bestCard, amount, category, merchant);
 });
 
+form.addEventListener("change", () => {
+  const context = getContextFromForm();
+  renderResults(recommend(context), context);
+});
+
+form.addEventListener("input", () => {
+  const context = getContextFromForm();
+  renderResults(recommend(context), context);
+});
+
+quickPickForm.addEventListener("change", () => {
+  const amount = Number(quickPickForm.purchaseAmount.value);
+  const category = quickPickForm.quickCategory.value;
+  const merchant = quickPickForm.quickMerchant.value;
+  const bestCard = recommendQuickCard(amount, category, merchant);
+  renderQuickResult(bestCard, amount, category, merchant);
+});
+
+quickPickForm.addEventListener("input", () => {
+  const amount = Number(quickPickForm.purchaseAmount.value);
+  const category = quickPickForm.quickCategory.value;
+  const merchant = quickPickForm.quickMerchant.value;
+  const bestCard = recommendQuickCard(amount, category, merchant);
+  renderQuickResult(bestCard, amount, category, merchant);
+});
+
 form.dispatchEvent(new Event("submit"));
 quickPickForm.dispatchEvent(new Event("submit"));
